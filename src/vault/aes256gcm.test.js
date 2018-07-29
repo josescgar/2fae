@@ -91,7 +91,7 @@ describe('AES 256 GCM encryption mode', () => {
 
       const res = aes256gcm.decrypt(encrypted, keyData);
       expect(Buffer.isBuffer(res)).toBe(true);
-      expect(res.length).toBe(encrypted.length);
+      expect(res).toHaveLength(encrypted.length);
     });
 
     it('should throw an error if no data buffer is provided', () => {

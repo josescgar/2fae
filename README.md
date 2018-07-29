@@ -1,4 +1,3 @@
-
 # Two factor authentication encryption file format
 ![Travis CI](https://travis-ci.org/josescgar/2fae.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/josescgar/2fae/badge.svg?branch=master)](https://coveralls.io/github/josescgar/2fae?branch=master)
 

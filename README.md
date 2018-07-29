@@ -1,3 +1,5 @@
+![Travis CI](https://travis-ci.org/josescgar/2fae.svg?branch=master)
+
 This library provides capabilities for encrypting, decrypting and manipulating `.2fae` files.
 
 2fae is a file format for adding two factor authentication to already encrypted files. This adds another layer of security to the encrypted file, making sure that only the intended recipients for the file are able to decrypt it, even if the file password is compromissed.

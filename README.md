@@ -1,8 +1,8 @@
 This library provides capabilities for encrypting, decrypting and manipulating `.2fae` files.
 
-2fae is file format for adding two factor authentication to already encrypted files. This adds another layer of security to the encrypted file, making sure that only the intended recipients for the file are able to decrypt it, even if the file password is compromissed.
+2fae is a file format for adding two factor authentication to already encrypted files. This adds another layer of security to the encrypted file, making sure that only the intended recipients for the file are able to decrypt it, even if the file password is compromissed.
 
-The file format by itself does not offer this functionality but rather is the container of the encrypted data as well as the metadata required by the 2fae client and servers to carry out the encryption and decryption.
+The file format by itself does not offer this functionality but rather is the container of the encrypted data as well as the metadata required by the 2fae client and server to carry out the encryption and decryption.
 
 # Encryption/Decryption flows
 When a user encrypts a file, the original file data is encrypted using `aes-256-gcm` encryption by default. At the same time that the encryption happens, a unique file id is generated and this information, together with the user id of the person carrying out the encryption, the encryption IV, key, auth tag, and file password are sent to the server. At the same time, a `2fae` file is generated, which contains only the encrypted data and the file id.

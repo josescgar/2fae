@@ -1,16 +1,16 @@
 const EncryptionMode = {
-  AES_256_GCM: 0,
+  AES_256_GCM: 0x00,
 };
 
 const FileFlags = {
-  HEADER: '2FAE',
-  END_OF_FILENAME: '2FAEFDED',
+  HEADER: '2fae',
+  END_OF_FILENAME: '2faefded',
 };
 
-const FORMAT_EXTENSION = '2fae';
+const MAX_SUPPORTED_FORMAT_VERSION = 0;
 
 module.exports = {
   EncryptionMode,
   FileFlags,
-  FORMAT_EXTENSION,
+  MAX_SUPPORTED_FORMAT_VERSION,
 };

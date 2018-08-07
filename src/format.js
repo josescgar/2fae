@@ -1,4 +1,5 @@
 const { FileFlags, EncryptionMode } = require('./constants');
+const vault = require('./vault/vault');
 
 module.exports = {
   is2faeFile: (inputBuffer) => {
@@ -36,5 +37,18 @@ module.exports = {
     }
 
     return inputBuffer.slice(4, 20).toString('hex');
+  },
+
+  decrypt: (inputBuffer, keyData) => {
+    if (!this.is2faeFile(inputBuffer)) {
+      throw new TypeError('The input file is not a 2fae file');
+    }
+
+    const mode = this.getEncryptionMode(inputBuffer);
+    if (!mode) {
+      throw new TypeError('Unrecognized encryption mode');
+    }
+
+    return vault.decrypt(inputBuffer, keyData, mode);
   },
 };

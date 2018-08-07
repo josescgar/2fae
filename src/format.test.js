@@ -3,7 +3,9 @@ const path = require('path');
 const format = require('./format');
 const { FileFlags, EncryptionMode } = require('./constants');
 
-const encryptedInput = fs.readFileSync(path.join(__dirname, '..', '__fixtures__', 'something-encrypted.2fae'));
+const fixturePath = path.join(__dirname, '..', '__fixtures__');
+const encryptedInput = fs.readFileSync(path.join(fixturePath, 'something-encrypted.2fae'));
+const expectedInput = require('../__fixtures__/expected');
 
 describe('2fae service', () => {
   describe('is2faeFile method', () => {
@@ -63,9 +65,19 @@ describe('2fae service', () => {
     });
   });
 
-  // describe('getFileId method', () => {
-  //   it('should return a string of the appropiatte length');
-  // });
+  describe('getFileId method', () => {
+    it('should return a string of the appropriate length', () => {
+      const res = format.getFileId(encryptedInput);
+      expect(res).toHaveLength(32);
+      expect(res).toBe(expectedInput.fileId);
+    });
+
+    it('should throw an error if the first argument is not a buffer', () => {
+      expect(() => format.getFileId('not a buffer'))
+        .toThrowError('Expected a buffer as input');
+    });
+  });
+
   // describe('encrypt method');
   // describe('decrypt method');
 });

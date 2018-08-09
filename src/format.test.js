@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const format = require('./format');
-const { FileFlags, EncryptionMode } = require('./constants');
+const { EncryptionMode } = require('./constants');
 
 const fixturePath = path.join(__dirname, '..', '__fixtures__');
 const encryptedInput = fs.readFileSync(path.join(fixturePath, 'something-encrypted.2fae'));
@@ -78,6 +78,32 @@ describe('2fae service', () => {
     });
   });
 
+  describe('decrypt method', () => {
+    it('should throw an error if the input file is not a 2fae file', () => {
+      const not2faeFile = Buffer.from(encryptedInput);
+      not2faeFile[0] = 6;
+      expect(() => format.decrypt(not2faeFile, expectedInput.keyData))
+        .toThrowError('The input file is not a 2fae file');
+    });
+
+    it('should throw an error if the encryption mode is not supported', () => {
+      const not2faeFile = Buffer.from(encryptedInput);
+      not2faeFile[3] = 0xFF;
+      expect(() => format.decrypt(not2faeFile, expectedInput.keyData))
+        .toThrowError('Unrecognized encryption mode');
+    });
+
+    it('should return the original filename', () => {
+      const res = format.decrypt(encryptedInput, expectedInput.keyData);
+      expect(res.originalFilename).toBe(expectedInput.originalFilename);
+    });
+
+    it('should return the original file data without the filename or the filename end flag', () => {
+      const res = format.decrypt(encryptedInput, expectedInput.keyData);
+      expect(Buffer.isBuffer(res.fileData)).toBe(true);
+      expect(encryptedInput.length).not.toBe(expectedInput.originalSize);
+      expect(res.fileData).toHaveLength(expectedInput.originalSize);
+    });
+  });
   // describe('encrypt method');
-  // describe('decrypt method');
 });

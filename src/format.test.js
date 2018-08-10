@@ -1,11 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const format = require('./format');
-const { EncryptionMode } = require('./constants');
+const { FileFlags, EncryptionMode } = require('./constants');
 
 const fixturePath = path.join(__dirname, '..', '__fixtures__');
-const encryptedInput = fs.readFileSync(path.join(fixturePath, 'something-encrypted.2fae'));
 const expectedInput = require('../__fixtures__/expected');
+
+const encryptedInput = fs.readFileSync(path.join(fixturePath, 'something-encrypted.2fae'));
+const originalInput = fs.readFileSync(path.join(fixturePath, 'some-file.txt'));
 
 describe('2fae service', () => {
   describe('is2faeFile method', () => {
@@ -105,5 +107,53 @@ describe('2fae service', () => {
       expect(res.fileData).toHaveLength(expectedInput.originalSize);
     });
   });
-  // describe('encrypt method');
+
+  describe('encrypt method', () => {
+    it('should throw an error if no input buffer provided', () => {
+      expect(() => format.encrypt(undefined, 'some-file.txt', 'randomMasterKey'))
+        .toThrowError('No input buffer to encrypt received');
+    });
+
+    it('should throw an error if no filename supplied', () => {
+      expect(() => format.encrypt(originalInput, undefined, 'randomMasterKey'))
+        .toThrowError('No original filename supplied');
+
+      expect(() => format.encrypt(originalInput, null, 'randomMasterKey'))
+        .toThrowError('No original filename supplied');
+
+      expect(() => format.encrypt(originalInput, '', 'randomMasterKey'))
+        .toThrowError('No original filename supplied');
+    });
+
+    it('should throw an error if no master key provided', () => {
+      expect(() => format.encrypt(originalInput, 'some-file.txt', ''))
+        .toThrowError('No master key provided');
+
+      expect(() => format.encrypt(originalInput, 'some-file.txt', null))
+        .toThrowError('No master key provided');
+
+      expect(() => format.encrypt(originalInput, 'some-file.txt'))
+        .toThrowError('No master key provided');
+    });
+
+    it('should return the key and file data', () => {
+      const res = format.encrypt(originalInput, 'some-file.txt', 'someRandomKey');
+
+      expect(res.keyData).toEqual(expect.any(Object));
+      expect(Buffer.isBuffer(res.data)).toBe(true);
+      expect(res.fileId).toEqual(expect.any(String));
+      expect(res.fileId).toHaveLength(32);
+    });
+
+    it('should correctly encrypt the data', () => {
+      const originalFilename = 'some-file.txt';
+      const encrypted = format.encrypt(originalInput, originalFilename, 'someRandomKey');
+
+      const decrypted = format.decrypt(encrypted.data, encrypted.keyData);
+
+      expect(decrypted.originalFilename).toBe(originalFilename);
+      expect(decrypted.fileData).toHaveLength(originalInput.length);
+      expect(Buffer.compare(decrypted.fileData, originalInput)).toBe(0);
+    });
+  });
 });

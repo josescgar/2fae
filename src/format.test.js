@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const format = require('./format');
-const { FileFlags, EncryptionMode } = require('./constants');
+const { EncryptionMode } = require('./constants');
 
 const fixturePath = path.join(__dirname, '..', '__fixtures__');
 const expectedInput = require('../__fixtures__/expected');
